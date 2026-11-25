@@ -11,7 +11,7 @@ export function adLibrary(country:string,keyword:string){return "https://www.fac
 export function evaluate(offer:Offer,ads:Ad[],rules:Rules=defaults,asOf?:string){
  const unique=new Map<string,Ad>();for(const a of ads){if(a.offerId!==offer.id||a.country!==rules.country||!a.id.trim()||!safeUrl(a.source)||!Number.isFinite(day(a.observed)))continue;const old=unique.get(a.id);if(!old||day(a.observed)>=day(old.observed))unique.set(a.id,a)}
  const records=[...unique.values()].filter(a=>a.status==="active"&&age(a.start,a.observed)!==null);
- const date=asOf||records.map(a=>a.observed).sort().at(-1)||"";
+ const date=asOf||[...unique.values()].map(a=>a.observed).sort().at(-1)||"";
  const current=records.filter(a=>a.observed===date);
  const windowAds=current.filter(a=>{const n=age(a.start,date);return n!==null&&n>=rules.minAge&&n<=rules.maxAge});
  const concepts=new Set(windowAds.filter(a=>a.reviewed&&a.concept.trim()).map(a=>a.concept.trim().toLowerCase())).size;
@@ -22,7 +22,7 @@ export function evaluate(offer:Offer,ads:Ad[],rules:Rules=defaults,asOf?:string)
 export function parseAds(raw:string,offer:Offer):Ad[]{
  const input:unknown=JSON.parse(raw);if(!Array.isArray(input))throw Error("Importe uma lista JSON de anúncios.");
  if(input.length>10000)throw Error("Limite: 10.000 registros por importação.");
- return input.map((v:unknown,i:number)=>{if(!v||typeof v!=="object")throw Error("Registro "+(i+1)+" inválido.");const a=v as Record<string,unknown>;const get=(k:string)=>typeof a[k]==="string"?(a[k] as string).trim():"";const id=get("id"),start=get("start"),observed=get("observed"),source=safeUrl(get("source")),country=get("country"),status=get("status");if(!id||!source||!countries.some(c=>c[0]===country)||!["active","inactive","unknown"].includes(status)||age(start,observed)===null)throw Error("Registro "+(i+1)+": ID, país, status, datas ISO e URL válidos são obrigatórios.");if(country!==offer.country)throw Error("Registro "+(i+1)+": país diferente da oferta.");return {id,offerId:offer.id,country,status:status as Ad["status"],start,observed,source,headline:get("headline"),concept:get("concept"),reviewed:false,format:get("format")||"Desconhecido"};});
+ return input.map((v:unknown,i:number)=>{if(!v||typeof v!=="object")throw Error("Registro "+(i+1)+" inválido.");const a=v as Record<string,unknown>;const get=(k:string)=>typeof a[k]==="string"?(a[k] as string).trim():"";const id=get("id"),start=get("start"),observed=get("observed"),source=safeUrl(get("source")),country=get("country"),status=get("status");if(!id||!source||!countries.some(c=>c[0]===country)||!["active","inactive","unknown"].includes(status)||age(start,observed)===null||day(observed)>day(new Date().toISOString().slice(0,10)))throw Error("Registro "+(i+1)+": ID, país, status, datas ISO e URL válidos são obrigatórios.");if(country!==offer.country)throw Error("Registro "+(i+1)+": país diferente da oferta.");return {id,offerId:offer.id,country,status:status as Ad["status"],start,observed,source,headline:get("headline"),concept:get("concept"),reviewed:false,format:get("format")||"Desconhecido"};});
 }
 export function mergeAds(old:Ad[],incoming:Ad[]){const map=new Map(old.map(a=>[a.offerId+"|"+a.country+"|"+a.id+"|"+a.observed,a]));for(const a of incoming){const k=a.offerId+"|"+a.country+"|"+a.id+"|"+a.observed;map.set(k,a)}return [...map.values()]}
 export const blankOffer=():Offer=>({id:"",name:"",advertiser:"",niche:"",country:"US",promise:"",url:"",pageTotal:null,favorite:false,monitored:false,notes:"",stage:"Descoberta"});
