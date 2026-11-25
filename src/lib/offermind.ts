@@ -1,4 +1,4 @@
-export type Ad = { id:string; offerId:string; country:string; status:"active"|"inactive"|"unknown"; start:string; observed:string; source:string; headline:string; concept:string; reviewed:boolean; format:string };
+export type Ad = { id:string; offerId:string; country:string; status:"active"|"inactive"|"unknown"; start:string; observed:string; source:string; headline:string; concept:string; reviewed:boolean; format:string; thumbnail?:string; video?:string; platforms?:string[] };
 export type Offer = { id:string; name:string; advertiser:string; niche:string; country:string; promise:string; url:string; pageTotal:number|null; favorite:boolean; monitored:boolean; notes:string; stage:string };
 export type Rules = { country:string; minAds:number; minAge:number; maxAge:number; minWindow:number; minConcepts:number };
 export const defaults:Rules={country:"US",minAds:41,minAge:14,maxAge:30,minWindow:5,minConcepts:3};
