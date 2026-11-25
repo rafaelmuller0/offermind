@@ -1,0 +1,5 @@
+# Feed visual — OfferMind
+
+O feed é a tela inicial. Os resultados de cada rodada do Auto Miner são adicionados automaticamente ao armazenamento local, sem exigir cadastro ou favorito. O feed oferece grade responsiva, lista, pesquisa, filtros de país, nicho, formato, plataforma, quantidade e idade, favoritos, comparação e links de evidência. As prévias de mídias são exibidas apenas quando retornadas pelo provedor em URLs HTTPS de domínios Meta permitidos; podem expirar. Não se apresentam capturas, preços, métricas ou criativos fictícios como reais.
+
+Para alimentar o feed real, a integração SearchAPI beta ainda exige credencial própria e teste de acesso. O produto comercial precisa de uma fonte licenciada, credencial de servidor protegida por autenticação, armazenamento compartilhado com proveniência, jobs programados, controle de custos e política de retenção. Ainda não há atualização automática periódica nem catálogo pré-populado para todos os usuários. Não foram executados build ou testes de integração nesta entrega.
