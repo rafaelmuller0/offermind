@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { parsePage,groupCandidates } from "../src/lib/discovery.ts";
 import { defaults,age } from "../src/lib/offermind.ts";
 const key=process.env.SEARCHAPI_API_KEY;
-if(!key||process.env.OFFERMIND_CATALOG_ENABLED!=="true")throw Error("Coleta desabilitada: configure credencial e autorização de catálogo.");
+if(!key||process.env.OFFERMIND_CATALOG_ENABLED!=="true"||process.env.OFFERMIND_PUBLIC_DATA_AUTHORIZED!=="true")throw Error("Coleta desabilitada: configure credencial e autorização de catálogo.");
 const limit=18, country="US", observed=new Date().toISOString().slice(0,10);
 const dateAgo=n=>new Date(Date.parse(observed+"T00:00:00Z")-n*86400000).toISOString().slice(0,10);
 const terms=[["Pets","dog training plan"],["Educação","learn to read"],["Maternidade","baby sleep guide"],["Hobbies","crochet patterns"],["Organização","cleaning schedule"],["Educação","daily lessons"],["Hobbies","guitar practice"],["Produtos digitais","digital guide"],["Produtos digitais","personalized plan"],["Produtos digitais","30 day challenge"],["Profissões","client templates"],["Hobbies","garden planner"]];
@@ -13,7 +13,7 @@ let calls=0;const found=[];const niches=new Map();const seenPages=new Map();let 
 async function collect(q,pageId,niche,pages,dated){
  let cursor="";
  for(let i=0;i<pages&&calls<limit;i++){
-  const params=new URLSearchParams({engine:"meta_ad_library",country:"us",ad_type:"all",active_status:"active",media_type:"all"});
+  const params=new URLSearchParams({engine:"meta_ad_library",country:"us",ad_type:"all",active_status:"active",media_type:"all",sort_by:"impressions_high_to_low"});
   if(pageId)params.set("page_id",pageId);else params.set("q",q);
   if(cursor)params.set("next_page_token",cursor);
   if(dated){params.set("start_date",dateAgo(30));params.set("end_date",dateAgo(14))}
@@ -31,6 +31,7 @@ for(const [niche,q] of chosen)await collect(q,"",niche,2,true);
 const pages=[...seenPages].sort((a,b)=>b[1].size-a[1].size).slice(0,3);
 if(seenPages.size>pages.length)incomplete=true;
 for(const [id] of pages){if(calls>=limit){incomplete=true;break}await collect("",id,niches.get(id),4,false)}
+if(found.length===0)throw Error("Nenhum anúncio identificável nesta coleta; catálogo anterior preservado. Verifique cobertura, termos e schema.");
 const groups=groupCandidates(found,defaults).filter(c=>c.windowAds.length>=1).slice(0,60);
 const offers=[],ads=[];
 for(const c of groups){
