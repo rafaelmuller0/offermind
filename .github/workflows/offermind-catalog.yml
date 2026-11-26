@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   refresh:
-    if: ${{ vars.OFFERMIND_CATALOG_ENABLED == 'true' }}
+    if: ${{ vars.OFFERMIND_CATALOG_ENABLED == 'true' && vars.OFFERMIND_PUBLIC_DATA_AUTHORIZED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -24,6 +24,7 @@ jobs:
         env:
           SEARCHAPI_API_KEY: ${{ secrets.SEARCHAPI_API_KEY }}
           OFFERMIND_CATALOG_ENABLED: ${{ vars.OFFERMIND_CATALOG_ENABLED }}
+          OFFERMIND_PUBLIC_DATA_AUTHORIZED: ${{ vars.OFFERMIND_PUBLIC_DATA_AUTHORIZED }}
         run: node --experimental-strip-types scripts/refresh-catalog.mjs
       - name: Publish refreshed catalog
         run: |
