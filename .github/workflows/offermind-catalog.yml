@@ -21,11 +21,16 @@ jobs:
         with:
           node-version: '22'
       - name: Collect authorized ad catalog
+        id: collect
         env:
           SEARCHAPI_API_KEY: ${{ secrets.SEARCHAPI_API_KEY }}
           OFFERMIND_CATALOG_ENABLED: ${{ vars.OFFERMIND_CATALOG_ENABLED }}
+          OFFERMIND_MAX_CALLS: ${{ vars.OFFERMIND_MAX_CALLS }}
         run: node --experimental-strip-types scripts/refresh-catalog.mjs
+      # Roda mesmo se a coleta falhar: o estado de falha gravado no catálogo
+      # precisa chegar à interface. O job continua marcado como falho.
       - name: Publish refreshed catalog
+        if: ${{ always() && steps.collect.conclusion != 'skipped' }}
         run: |
           git config user.name "offermind-catalog[bot]"
           git config user.email "offermind-catalog[bot]@users.noreply.github.com"
