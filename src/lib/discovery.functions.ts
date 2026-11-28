@@ -9,6 +9,8 @@ const input = z
     keyword: z.string().max(150),
     pageId: z.string().max(32).regex(/^\d*$/),
     cursor: z.string().max(32000),
+    media: z.enum(["all","video","image"]).optional(),
+    platform: z.enum(["all","facebook","instagram"]).optional(),
     start: z.string().regex(/^\d{4}-\d{2}-\d{2}$|^$/),
     end: z.string().regex(/^\d{4}-\d{2}-\d{2}$|^$/),
   })
