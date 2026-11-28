@@ -9,6 +9,8 @@ export async function collectPage(
     cursor: string;
     start: string;
     end: string;
+    media?: "all" | "video" | "image";
+    platform?: "all" | "facebook" | "instagram";
   },
 ) {
   const key = process.env["SEARCHAPI_API_KEY"];
@@ -24,9 +26,10 @@ export async function collectPage(
     country: data.country.toLowerCase(),
     ad_type: "all",
     active_status: "active",
-    media_type: "all",
+    media_type: data.media || "all",
     sort_by: "impressions_high_to_low",
   });
+  if (data.platform && data.platform !== "all") params.set("platforms", data.platform);
   if (data.pageId) params.set("page_id", data.pageId);
   if (data.keyword.trim()) params.set("q", data.keyword.trim());
   if (data.cursor) params.set("next_page_token", data.cursor);
