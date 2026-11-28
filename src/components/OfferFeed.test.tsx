@@ -12,7 +12,7 @@ const click=(name:string|RegExp)=>fireEvent.click(screen.getByRole("button",{nam
 describe("feed workflow",()=>{
  it("displays five matching saved products and loads the next batch in place",()=>{
   const onResearch=vi.fn();
-  render(<OfferFeed items={items} rules={rules} onCountry={vi.fn()} onResearch={onResearch} onOpen={vi.fn()} onFavorite={vi.fn()} onCompare={vi.fn()} selected={[]}/>);
+  render(<OfferFeed onCreate={vi.fn()} items={items} rules={rules} onCountry={vi.fn()} onResearch={onResearch} onOpen={vi.fn()} onFavorite={vi.fn()} onCompare={vi.fn()} selected={[]}/>);
   click(/Brasil/);click(/Todos os nichos/);click("Todos os micronichos");click("Todos os produtos");click(/Revisar pesquisa/);click("Encontrar ofertas");
   expect(screen.getAllByRole("article")).toHaveLength(5);
   expect(onResearch).toHaveBeenCalledTimes(1);
@@ -20,8 +20,23 @@ describe("feed workflow",()=>{
   expect(screen.getAllByRole("article")).toHaveLength(6);
   expect(screen.queryByRole("button",{name:"Mais 5 ofertas"})).not.toBeInTheDocument();
  });
+ it("applies the submitted term by click or Enter and focuses the result count",()=>{
+  render(<OfferFeed onCreate={vi.fn()} items={items} rules={rules} onCountry={vi.fn()} onResearch={vi.fn()} onOpen={vi.fn()} onFavorite={vi.fn()} onCompare={vi.fn()} selected={[]}/>);
+  click("Explorar feed");
+  const input=screen.getByRole("textbox",{name:"Buscar ofertas"});
+  fireEvent.change(input,{target:{value:"produto 3"}});
+  expect(screen.getAllByRole("article")).toHaveLength(6);
+  click("Buscar ofertas");
+  expect(screen.getAllByRole("article")).toHaveLength(1);
+  expect(screen.getByRole("heading",{name:/resultado da busca.*produto 3.*1 de 6/i})).toHaveFocus();
+  fireEvent.change(input,{target:{value:"ausente"}});
+  fireEvent.keyDown(input,{key:"Enter"});
+  expect(screen.getByText("Nenhuma oferta para estes filtros")).toBeVisible();
+  click("Limpar filtros");
+  expect(screen.getAllByRole("article")).toHaveLength(6);
+ });
  it("distinguishes an empty catalog from a failed search",()=>{
-  render(<OfferFeed items={[]} rules={rules} onCountry={vi.fn()} onResearch={vi.fn()} onOpen={vi.fn()} onFavorite={vi.fn()} onCompare={vi.fn()} selected={[]}/>);
+  render(<OfferFeed onCreate={vi.fn()} items={[]} rules={rules} onCountry={vi.fn()} onResearch={vi.fn()} onOpen={vi.fn()} onFavorite={vi.fn()} onCompare={vi.fn()} selected={[]}/>);
   click("Explorar feed");
   expect(screen.getByRole("heading",{name:"Catálogo sem ofertas neste mercado"})).toBeInTheDocument();
  });
