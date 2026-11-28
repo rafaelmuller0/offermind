@@ -1,6 +1,6 @@
 # OfferMind
 
-a
+[Configuração da pesquisa, catálogo e acesso privado](docs/PESQUISA.md)
 
 This project was built with [Lovable](https://lovable.dev).
 

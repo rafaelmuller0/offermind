@@ -1,0 +1,15 @@
+# Pesquisa no site
+
+O menu OfferMind Chat consulta o histórico privado e executa uma etapa por aprovação. A seleção de mercado inicia o ranking. A escolha de nicho inicia os micronichos. A escolha de micronicho habilita a coleta. O usuário pode revisar a etapa, pedir outro lote, investigar uma candidata ou arquivar a operação. O código incorpora no servidor a revisão 1.4 do manual do Drive. Para atualizar o manual, revise a cópia em master-prompt.server.ts.
+
+## Acesso e persistência
+
+Proteja o domínio do aplicativo com uma política de admissão do Cloudflare Access. Configure CF_ACCESS_TEAM_DOMAIN (domínio da equipe sem https) e CF_ACCESS_AUD (audiência da aplicação). O servidor valida a assinatura do token e usa o identificador do usuário para separar históricos e limites diários. Configure UPSTASH_REDIS_REST_URL e UPSTASH_REDIS_REST_TOKEN em armazenamento privado compatível com a API REST do Redis, com TLS, suporte a EVAL e capacidade para históricos e arquivos. Nenhuma conta é provisionada pela aplicação. As preferências, anotações e evidências do Vault existente continuam no navegador.
+
+## Pesquisa e evidências
+
+Configure OPENAI_API_KEY no backend e, opcionalmente, OFFERMIND_OPENAI_MODEL para um modelo compatível com Responses e web_search. A aplicação usa a Responses API direta, com store=false. O serviço recebe o manual, o contexto da operação e as escolhas. O limite por usuário é de 24 solicitações de IA por dia UTC. O modelo só pode produzir texto com as ferramentas atuais. Fontes dos rankings e da análise da oferta precisam ter citações retornadas pela API. Uma URL de destino recebida do anúncio permanece candidata. A análise mostra separadamente a página de vendas e o checkout quando cada URL apresentada consta nas páginas abertas pela pesquisa e nas citações.
+
+Configure SEARCHAPI_API_KEY em segredos do servidor. Habilite OFFERMIND_RESEARCH_AUTHORIZED=true e OFFERMIND_LICENSED_COUNTRIES (códigos separados por vírgula, como BR,US) somente para mercados e usos cobertos pela autorização obtida. A mineração sob demanda limita o consumo a 60 consultas por usuário por dia UTC. O catálogo agendado usa a mesma lista de países e seu próprio segredo do GitHub Actions. O job diário na branch padrão exige também OFFERMIND_CATALOG_ENABLED=true e OFFERMIND_PUBLIC_DATA_AUTHORIZED=true. Esta última opção autoriza gravar dados em arquivos públicos do site e no histórico Git. Verifique o alcance da licença para textos, URLs de mídia, armazenamento, envio à IA e exibição a assinantes antes de ativar cada uso. O coletor preserva a versão anterior ao falhar. Os lotes podem ter menos de cinco resultados e uma candidata pode não cumprir os critérios de validação.
+
+A Biblioteca oficial da Meta limita anúncios sem entrega na UE a temas sociais, eleições e política. SearchAPI documenta BR e US, mas sua documentação técnica não comprova os direitos específicos do OfferMind. Consulte a [cobertura oficial](https://www.facebook.com/ads/library/api/), as [regiões da SearchAPI](https://www.searchapi.io/docs/parameters/meta-ad-library/country) e seus [termos](https://www.searchapi.io/legal/terms).

@@ -16,7 +16,7 @@ function Preview({ad,demo}:{ad:Ad|undefined;demo:boolean}){
  </div>
 }
 export default function OfferFeed({items,rules,demo,onCountry,onMine,onDemo,onOpen,onFavorite,onCompare,selected}:Props){
- const [source,setSource]=useState<"meta"|"local">("meta");
+ const [source,setSource]=useState<"meta"|"local">("local");
  const [query,setQuery]=useState("");const [niche,setNiche]=useState("all");const [platform,setPlatform]=useState("all");const [volume,setVolume]=useState("all");const [period,setPeriod]=useState("all");const [format,setFormat]=useState("all");const [fav,setFav]=useState(false);const [sort,setSort]=useState("volume");const [layout,setLayout]=useState("grid");const [limit,setLimit]=useState(24);
  const rows=useMemo(()=>items.map(({o,e})=>{const ads=e.records;const rep=[...e.windowAds,...ads].find(a=>media(a.thumbnail)||media(a.video))||e.windowAds[0]||ads[0];const platforms=[...new Set(ads.flatMap(a=>a.platforms||[]).map(p=>p.toLowerCase()))];return {o,e,rep,platforms}}),[items]);
  const niches=[...new Set(items.map(x=>x.o.niche).filter(Boolean))].sort();
