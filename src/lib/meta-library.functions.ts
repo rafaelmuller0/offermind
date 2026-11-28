@@ -5,6 +5,8 @@ import { z } from "zod";
 const query = z.object({
   term: z.string().trim().min(1).max(150),
   country: z.enum(["US","BR","GB","CA","AU","DE","FR","ES","PT"]),
+  platform: z.enum(["FACEBOOK", "INSTAGRAM"]).optional(),
+  media: z.enum(["IMAGE", "VIDEO"]).optional(),
   after: z.string().max(8192).optional(),
 });
 
@@ -30,6 +32,8 @@ export const searchMetaLibrary = createServerFn({ method: "POST" }).validator(qu
     ad_reached_countries: JSON.stringify([data.country]),
     fields: "id,page_name,ad_creative_bodies", limit: "25",
   }).toString();
+  if (data.platform) url.searchParams.set("publisher_platforms", JSON.stringify([data.platform]));
+  if (data.media) url.searchParams.set("media_type", data.media);
   if (data.after) url.searchParams.set("after", data.after);
   const response = await fetch(url, {
     headers: { Authorization: "Bearer " + token }, redirect: "error", signal: AbortSignal.timeout(20000),
