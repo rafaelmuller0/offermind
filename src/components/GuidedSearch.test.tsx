@@ -14,7 +14,7 @@ describe("guided catalog search",()=>{
   fireEvent.click(screen.getByRole("button",{name:"Extensão de cílios"}));
   fireEvent.click(screen.getByRole("button",{name:"Cursos online"}));
   fireEvent.click(screen.getByRole("button",{name:/Revisar pesquisa/}));
-  expect(screen.getByText("1 ofertas correspondentes no catálogo")).toBeInTheDocument();
+  expect(screen.getByText("1 oferta correspondente no catálogo")).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button",{name:"Encontrar ofertas"}));
   expect(onApply).toHaveBeenCalledWith(expect.objectContaining({country:"BR",filters:expect.objectContaining({niche:"Beleza e estética",microniche:"Extensão de cílios",productType:"course",volume:"1",minWindow:1})}));
  });
