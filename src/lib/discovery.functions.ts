@@ -21,5 +21,5 @@ export const searchAdsPage = createServerFn({ method: "POST" })
   .validator(input)
   .handler(async ({ data }) => {
     setResponseHeaders(new Headers({ "Cache-Control": "no-store" }));
-    return collectPage(await researcher(), data);
+    return collectPage(await researcher(), { ...data, media: data.media ?? "all", platform: data.platform ?? "all" });
   });
