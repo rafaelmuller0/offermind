@@ -22,7 +22,7 @@ function Creative({ad}:{ad:FoundAd}){
  {!playing&&video&&!failed&&<button type="button" onClick={()=>setPlaying(true)} className="absolute bottom-3 right-3 rounded-lg bg-black/80 px-3 py-2 text-xs text-white">Reproduzir vídeo</button>}
  </div>
 }
-function Index(){
+export function Index(){
  const search=useServerFn(searchLibrary);
  const [draft,setDraft]=useState<Filters>(initial);const [applied,setApplied]=useState<Filters|null>(null);
  const [ads,setAds]=useState<FoundAd[]>([]);const [cursor,setCursor]=useState("");const [busy,setBusy]=useState(false);
