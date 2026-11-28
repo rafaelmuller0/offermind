@@ -1,0 +1,41 @@
+name: OfferMind catalog refresh
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: offermind-catalog
+  cancel-in-progress: false
+jobs:
+  refresh:
+    if: ${{ vars.OFFERMIND_CATALOG_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Collect authorized ad catalog
+        id: collect
+        env:
+          SEARCHAPI_API_KEY: ${{ secrets.SEARCHAPI_API_KEY }}
+          OFFERMIND_CATALOG_ENABLED: ${{ vars.OFFERMIND_CATALOG_ENABLED }}
+          OFFERMIND_MAX_CALLS: ${{ vars.OFFERMIND_MAX_CALLS }}
+        run: node --experimental-strip-types scripts/refresh-catalog.mjs
+      # Roda mesmo se a coleta falhar: o estado de falha gravado no catálogo
+      # precisa chegar à interface. O job continua marcado como falho.
+      - name: Publish refreshed catalog
+        if: ${{ always() && steps.collect.conclusion != 'skipped' }}
+        run: |
+          git config user.name "offermind-catalog[bot]"
+          git config user.email "offermind-catalog[bot]@users.noreply.github.com"
+          git add public/offermind-catalog.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: refresh observed offer catalog"
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -1,7 +1,7 @@
 # Auto Miner (beta)
 O fluxo padrão agora é descobrir ofertas, e não cadastrar. O conector candidato SearchAPI consulta a biblioteca de anúncios por termos e país e aprofunda até três anunciantes, com paginação limitada. O operador seleciona um nicho, aceita o orçamento de chamadas (6, 12 ou 18) e fornece sua própria chave. A chave fica apenas em memória durante a rodada e é enviada ao endpoint de servidor via POST; não é persistida nem colocada na URL do fornecedor. Não há chave compartilhada nem cobrança do OfferMind. Não use com credenciais de produção até verificar o HTTPS e a política de logs/segurança da hospedagem.
 
-Documentação do fornecedor: https://www.searchapi.org/docs/meta-ad-library-api
+Documentação do fornecedor: https://www.searchapi.io/docs/meta-ad-library-api
 O conector é uma implementação candidata baseada na documentação, não uma integração verificada com credenciais reais. Antes de usar comercialmente, verificar autorização, cobertura de anúncios comerciais dos EUA, termos da Meta, condições de retenção/redistribuição e custo. Nenhum contrato foi firmado.
 
 ## Estratégia
