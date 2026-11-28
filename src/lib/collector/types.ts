@@ -1,8 +1,24 @@
 import type { FoundAd, SearchPage } from "../discovery.ts";
 import type { ProviderErrorKind } from "./errors.ts";
 
+/** Valores documentados do parâmetro ad_type do SearchAPI. */
+export const AD_TYPES = [
+  "all",
+  "political_and_issue_ads",
+  "housing_ads",
+  "employment_ads",
+  "credit_ads",
+] as const;
+export type AdType = (typeof AD_TYPES)[number];
+
+/** Valores documentados do parâmetro sort_by do SearchAPI. */
+export const SORTS = ["impressions_high_to_low", "most_recent"] as const;
+export type SortBy = (typeof SORTS)[number];
+
 export type SearchQuery = {
   country: string;
+  adType?: AdType | undefined;
+  sortBy?: SortBy | undefined;
   keyword?: string | undefined;
   pageId?: string | undefined;
   cursor?: string | undefined;
@@ -27,6 +43,8 @@ export type CollectionPlan = {
   deepenPages: number;
   /** Janela de datas de veiculação aplicada somente à descoberta. */
   window?: { start: string; end: string };
+  adType?: AdType;
+  sortBy?: SortBy;
 };
 
 export type QueryLog = {

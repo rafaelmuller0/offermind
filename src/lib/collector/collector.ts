@@ -159,6 +159,8 @@ export async function runCollection(options: Options): Promise<RunResult> {
         keyword: term.keyword,
         startDate: plan.window?.start,
         endDate: plan.window?.end,
+        adType: plan.adType,
+        sortBy: plan.sortBy,
       },
       plan.discoverPages,
       log,
@@ -184,7 +186,12 @@ export async function runCollection(options: Options): Promise<RunResult> {
       break;
     }
     const log = newLog("deepen", nicheByPage[pageId] ?? "", null, pageId);
-    await paginate({ country, pageId }, plan.deepenPages, log, () => {});
+    await paginate(
+      { country, pageId, adType: plan.adType, sortBy: plan.sortBy },
+      plan.deepenPages,
+      log,
+      () => {},
+    );
   }
 
   const incomplete =

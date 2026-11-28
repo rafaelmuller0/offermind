@@ -18,10 +18,11 @@ export function buildSearchParams(query: SearchQuery) {
     // A lista oficial de países usa maiúsculas (US, BR). Os exemplos da página principal
     // usam minúsculas e a documentação não diz se o campo diferencia caixa; seguimos a lista.
     country: query.country.toUpperCase(),
-    ad_type: "all",
+    ad_type: query.adType ?? "all",
     active_status: "active",
     media_type: "all",
   });
+  if (query.sortBy) params.set("sort_by", query.sortBy);
   if (query.pageId) params.set("page_id", query.pageId);
   else if (query.keyword?.trim()) params.set("q", query.keyword.trim());
   if (query.cursor) params.set("next_page_token", query.cursor);
