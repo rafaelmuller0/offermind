@@ -1,3 +1,4 @@
+import { researcher,reserve } from "./research-store.server";
 import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeaders } from "@tanstack/react-start/server";
 import { z } from "zod";
@@ -24,7 +25,7 @@ const page = z.object({
 });
 
 export const searchMetaLibrary = createServerFn({ method: "POST" })
-  .inputValidator((input) => query.parse(input))
+  .validator((input) => query.parse(input))
   .handler(async ({ data }): Promise<MetaLibraryResponse> => {
     setResponseHeaders(new Headers({ "Cache-Control": "no-store" }));
     const token = process.env["META_AD_LIBRARY_ACCESS_TOKEN"]?.trim();
@@ -36,6 +37,7 @@ export const searchMetaLibrary = createServerFn({ method: "POST" })
       };
     }
 
+    await reserve(await researcher(),"meta",60);
     const url = new URL("https://graph.facebook.com/v27.0/ads_archive");
     url.search = new URLSearchParams({
       ad_type: "ALL",
